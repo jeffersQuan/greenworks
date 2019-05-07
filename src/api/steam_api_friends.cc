@@ -75,7 +75,7 @@ void InitFriendPersonaChange(v8::Local<v8::Object> exports) {
   SET_TYPE(persona_change, "RelationshipChanged",
            k_EPersonaChangeRelationshipChanged);
   SET_TYPE(persona_change, "NameFirstSet", k_EPersonaChangeNameFirstSet);
-  SET_TYPE(persona_change, "FacebookInfo", k_EPersonaChangeFacebookInfo);
+  //SET_TYPE(persona_change, "FacebookInfo", k_EPersonaChangeFacebookInfo);
   SET_TYPE(persona_change, "NickName", k_EPersonaChangeNickname);
   SET_TYPE(persona_change, "SteamLevel", k_EPersonaChangeSteamLevel);
   Nan::Persistent<v8::Object> constructor;
