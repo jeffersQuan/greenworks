@@ -4,11 +4,15 @@
 
 #include "nan.h"
 #include "steam/steam_api.h"
+#include "steam/rail/sdk/rail_function_helper.h"
 #include "v8.h"
 
 #include "api/steam_api_registry.h"
 #include "steam_client.h"
 #include "steam_event.h"
+
+HMODULE sdk_handle;
+bool has_init = false;
 
 namespace {
 
@@ -39,6 +43,52 @@ NAN_METHOD(InitAPI) {
   info.GetReturnValue().Set(Nan::New(success));
 }
 
+
+	HMODULE LoadWeGameSDKLibrary() {
+		std::wstring rail_sdk_name;
+#ifdef _WIN64  // windows for example
+		rail_sdk_name = L"rail_api64.dll";
+#else
+		rail_sdk_name = L"rail_api.dll";
+#endif
+
+//		std::wstring rail_sdk_path = L".\\rail\\libs\\" + rail_sdk_name;
+
+        if (sdk_handle == NULL) {
+            HMODULE dll_handle = ::LoadLibraryW(rail_sdk_path.c_str());
+            if (NULL == dll_handle) {
+                return NULL;
+            }
+
+            return dll_handle;
+        }
+	}
+
+NAN_METHOD(initSdk) {
+  Nan::HandleScope scope;
+  bool success = false;
+
+  if (!has_init) {
+    sdk_handle = LoadWeGameSDKLibrary();
+    if (sdk_handle != NULL) {
+        rail::helper::Invoker invoker(sdk_handle);
+
+        rail::RailGameID game_id = 2000958;
+        char **argv;
+
+        bool ret = invoker.RailNeedRestartAppForCheckingEnvironment(game_id, 0, const_cast<const char**>(argv));
+        if (!ret) {
+            ret = invoker.RailInitialize();
+            if (ret) {
+                success = true;
+                has_init = true;
+            }
+        }
+    }
+  }
+  info.GetReturnValue().Set(Nan::New(success));
+}
+
 NAN_MODULE_INIT(init) {
   // Set internal steam event handler.
   v8::Local<v8::Object> steam_events = Nan::New<v8::Object>();
@@ -50,6 +100,10 @@ NAN_MODULE_INIT(init) {
   Nan::Set(target,
            Nan::New("initAPI").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(InitAPI)->GetFunction());
+
+  Nan::Set(target,
+           Nan::New("initSdk").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(initSdk)->GetFunction());
 }
 
 }  // namespace

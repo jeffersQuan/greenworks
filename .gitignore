@@ -12,3 +12,4 @@ steam_appid.txt
 npm-debug.log
 package-lock.json
 .project
+.idea/
