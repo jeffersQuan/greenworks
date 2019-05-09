@@ -66,7 +66,9 @@ NAN_METHOD(InitAPI) {
 
 NAN_METHOD(initSdk) {
   Nan::HandleScope scope;
-  bool success = false;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
 
   if (!has_init) {
     sdk_handle = LoadWeGameSDKLibrary();
@@ -80,13 +82,19 @@ NAN_METHOD(initSdk) {
         if (!ret) {
             ret = invoker.RailInitialize();
             if (ret) {
-                success = true;
+                ret = true;
                 has_init = true;
             }
+        } else {
+        	code = -2;
         }
+    } else {
+    	code = -1;
     }
   }
-  info.GetReturnValue().Set(Nan::New(success));
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
 }
 
 NAN_MODULE_INIT(init) {
