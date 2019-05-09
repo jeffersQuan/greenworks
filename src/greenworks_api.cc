@@ -4,7 +4,7 @@
 
 #include "nan.h"
 #include "steam/steam_api.h"
-#include "steam/rail/sdk/rail_function_helper.h"
+#include "rail/sdk/rail_function_helper.h"
 #include "v8.h"
 
 #include "api/steam_api_registry.h"
