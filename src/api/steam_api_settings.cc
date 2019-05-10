@@ -341,6 +341,7 @@ NAN_METHOD(getUserId) {
 		uint64_t num_user_id = user_id.get_id();
 		uid = std::to_string(num_user_id);
 		code = 0;
+		ret = true;
 	} else {
 		code = -3;
 	}
