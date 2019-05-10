@@ -327,7 +327,7 @@ NAN_METHOD(getUserId) {
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
   int code = -1;
-  uint64_t uid = 0;
+  string uid = "";
 
   if (sdk_handle != NULL) {
     rail::helper::Invoker invoker(sdk_handle);
@@ -337,8 +337,8 @@ NAN_METHOD(getUserId) {
 	if (has_logged_in) {
 		rail::RailID user_id = player->GetRailID();
 		// 可以将用户ID转换为64位整数
-		uid = user_id.get_id();
-		ret = true;
+		uint64_t num_user_id = user_id.get_id();
+		uid = to_string(num_user_id);
 		code = 0;
 	} else {
 		code = -3;
@@ -350,7 +350,7 @@ NAN_METHOD(getUserId) {
 
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
-  result->Set(Nan::New("uid").ToLocalChecked(), Nan::New(uid));
+  result->Set(Nan::New("uid").ToLocalChecked(), Nan::New(uid).ToLocalChecked());
   info.GetReturnValue().Set(result);
 }
 
