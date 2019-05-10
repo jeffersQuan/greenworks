@@ -91,6 +91,8 @@ NAN_METHOD(initSdk) {
     } else {
     	code = -1;
     }
+  } else {
+    ret = true;
   }
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
