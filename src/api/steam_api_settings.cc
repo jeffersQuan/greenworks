@@ -16,6 +16,9 @@
 #include "steam_client.h"
 #include "steam_event.h"
 #include "steam_id.h"
+#include "rail/sdk/rail_function_helper.h"
+
+extern HMODULE sdk_handle;
 
 namespace greenworks {
 namespace api {
@@ -271,6 +274,86 @@ NAN_METHOD(hello) {
   info.GetReturnValue().Set(Nan::New("world").ToLocalChecked());
 }
 
+NAN_METHOD(railFire) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    invoker.RailFireEvents();
+    ret = true;
+    code = 0;
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(checkLogin) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailPlayer* player = invoker.RailFactory()->RailPlayer();
+	bool has_logged_in = player->AlreadyLoggedIn();
+
+	if (has_logged_in) {
+		ret = true;
+		code = 0;
+	} else {
+		code = -3;
+	}
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(getUserId) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+  uint64_t uid = 0;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailPlayer* player = invoker.RailFactory()->RailPlayer();
+	bool has_logged_in = player->AlreadyLoggedIn();
+
+	if (has_logged_in) {
+		rail::RailID user_id = player->GetRailID();
+		// 可以将用户ID转换为64位整数
+		uid = user_id.get_id();
+		ret = true;
+		code = 0;
+	} else {
+		code = -3;
+	}
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  result->Set(Nan::New("uid").ToLocalChecked(), Nan::New(uid));
+  info.GetReturnValue().Set(result);
+}
+
 void RegisterAPIs(v8::Local<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("_version").ToLocalChecked(),
@@ -323,6 +406,15 @@ void RegisterAPIs(v8::Local<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("hello").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(hello)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("railFire").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(railFire)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("checkLogin").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(checkLogin)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("getUserId").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(getUserId)->GetFunction());
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
