@@ -18,12 +18,19 @@
 #include "steam_event.h"
 #include "steam_id.h"
 #include "rail/sdk/rail_function_helper.h"
+#include "rail/sdk/rail_storage.h"
+#include "rail/sdk/rail_dlc.h"
+#include "RailPurchaseStore.h"
+#include "CustomEvents.h"
 
 extern HMODULE sdk_handle;
 
 namespace greenworks {
 namespace api {
 namespace {
+
+RailPurchaseStore *iRailPurchaseStore;
+CustomEvents *iCustomEvents;
 
 #define MAKE_ENUM_PAIR(name) \
     { name, #name }
@@ -451,6 +458,100 @@ NAN_METHOD(setStorage) {
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
   result->Set(Nan::New("data").ToLocalChecked(), Nan::New(data).ToLocalChecked());
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(getProductsInfo) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+
+  if (info.Length() < 1 || (!info[0]->IsFunction())) {
+	THROW_BAD_ARGS("Bad arguments");
+  }
+
+  if (sdk_handle != NULL) {
+	rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
+
+    if (rail_in_game_purchase_ == NULL) {
+    	code = -3;
+    } else {
+    	if (rail_in_game_purchase_) {
+    		Local<Function> cb = info[0].As<v8::Function>();
+    		if (iRailPurchaseStore == NULL) {
+    		  iRailPurchaseStore = new RailPurchaseStore();
+    		}
+
+    		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
+    		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
+    		if (result == rail::kSuccess) {
+    			code = 0;
+    			ret = true;
+    		} else {
+    			code = -5;
+    		}
+    	} else {
+    		code = -4;
+    	}
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(payForProduct) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+
+  if (info.Length() < 3 || (!info[1]->IsString()) || (!info[0]->IsNumber()) || (!info[2]->IsFunction())) {
+	THROW_BAD_ARGS("Bad arguments");
+  }
+
+  if (sdk_handle != NULL) {
+	rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
+
+    if (rail_in_game_purchase_ == NULL) {
+    	code = -3;
+    } else {
+    	if (rail_in_game_purchase_) {
+    		int64_t product_id = info[0].As<v8::Number>()->NumberValue();
+    		std::string order_id = *(v8::String::Utf8Value(info[1]));
+    		rail::RailProductItem productItem;
+			productItem.product_id = product_id;
+			productItem.quantity = 1;
+			productItems.push_back(productItem);
+			Local<Function> cb = info[2].As<v8::Function>();
+    		if (iRailPurchaseStore == NULL) {
+    		  iRailPurchaseStore = new RailPurchaseStore();
+    		}
+
+    		iRailPurchaseStore->asyncPurchaseProductsCallback.Reset(isolate, cb);
+    		rail::RailResult result = rail_in_game_purchase_->AsyncPurchaseProducts(productItems, orderId.c_str());
+    		if (result == rail::kSuccess) {
+    			code = 0;
+    			ret = true;
+    		} else {
+    			code = -5;
+    		}
+    	} else {
+    		code = -4;
+    	}
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
   info.GetReturnValue().Set(result);
 }
 
