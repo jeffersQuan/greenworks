@@ -47,9 +47,9 @@ NAN_METHOD(InitAPI) {
 	HMODULE LoadWeGameSDKLibrary() {
 		std::wstring rail_sdk_name;
 #ifdef _WIN64  // windows for example
-		rail_sdk_name = L"rail_api64.dll";
+		rail_sdk_name = L".\\rail_api64.dll";
 #else
-		rail_sdk_name = L"rail_api.dll";
+		rail_sdk_name = L".\\rail_api.dll";
 #endif
 
 		std::wstring rail_sdk_path = rail_sdk_name;
@@ -68,7 +68,7 @@ NAN_METHOD(initSdk) {
   Nan::HandleScope scope;
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
-  int code = -1;
+  int code = 0;
 
   if (!has_init) {
     sdk_handle = LoadWeGameSDKLibrary();
