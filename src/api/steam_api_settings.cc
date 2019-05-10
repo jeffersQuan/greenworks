@@ -4,6 +4,7 @@
 
 #include <map>
 #include <sstream>
+#include <string.h>
 
 #include "nan.h"
 #include "steam/steam_api.h"
@@ -327,7 +328,7 @@ NAN_METHOD(getUserId) {
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
   int code = -1;
-  string uid = "";
+  std::string uid = "";
 
   if (sdk_handle != NULL) {
     rail::helper::Invoker invoker(sdk_handle);
@@ -338,7 +339,7 @@ NAN_METHOD(getUserId) {
 		rail::RailID user_id = player->GetRailID();
 		// 可以将用户ID转换为64位整数
 		uint64_t num_user_id = user_id.get_id();
-		uid = to_string(num_user_id);
+		uid = std::to_string(num_user_id);
 		code = 0;
 	} else {
 		code = -3;
