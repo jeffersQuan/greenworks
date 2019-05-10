@@ -373,7 +373,6 @@ NAN_METHOD(getStorage) {
 		uint32_t file_size = file->GetSize();
 		char* buff = new char[file_size + 1];
 
-		rail::RailResult result;
 		file->Read(buff, file_size, &result);
 
 		if (result == rail::kSuccess) {
