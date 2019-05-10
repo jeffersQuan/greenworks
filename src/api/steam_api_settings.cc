@@ -356,6 +356,106 @@ NAN_METHOD(getUserId) {
   info.GetReturnValue().Set(result);
 }
 
+NAN_METHOD(getStorage) {
+  Nan::HandleScope scope;
+  rail::RailString filename = "imprison";
+  rail::RailResult result;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+  std::string data = "";
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFile* file = invoker.RailFactory()->RailStorageHelper()->OpenFile(filename, &result);
+
+	if (result == rail::kSuccess) {
+		uint32_t file_size = file->GetSize();
+		char* buff = new char[file_size + 1];
+
+		rail::RailResult result;
+		file->Read(buff, file_size, &result);
+
+		if (result == rail::kSuccess) {
+			buff[file_size] = '\0';
+			data = buff;
+			code = 0;
+			ret = true;
+		}
+		else {
+			code = -4;
+		}
+	}
+	else {
+		file = invoker.RailFactory()->RailStorageHelper()->CreateFileA(filename, &result);
+		const char *buff1 = "test";
+		rail::RailResult result1;
+		file->Write(buff1, strlen(buff1) + 1, &result1);
+
+		if (result1 == rail::kSuccess) {
+			code = 0;
+			ret = true;
+			data = "test";
+		}
+		else {
+			code = -3;
+		}
+	}
+
+	file->Close();
+	file->Release();
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  result->Set(Nan::New("data").ToLocalChecked(), Nan::New(data).ToLocalChecked());
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(setStorage) {
+  Nan::HandleScope scope;
+  rail::RailString filename = "imprison";
+  rail::RailResult result;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+  std::string data = "";
+
+  if (info.Length() < 1 || !info[0]->IsString()) {
+	THROW_BAD_ARGS("Bad arguments");
+  }
+
+  std::string data_to_store = (*(v8::String::Utf8Value(info[0])));
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFile* file = invoker.RailFactory()->RailStorageHelper()->CreateFileA(filename, &result);
+	uint32_t len = data_to_store.length();
+
+	file->Write(data_to_store.c_str(), len, &result);
+
+	if (result == rail::kSuccess) {
+		data = data_to_store;
+		code = 0;
+		ret = true;
+	}
+	else {
+		code = -3;
+	}
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  result->Set(Nan::New("data").ToLocalChecked(), Nan::New(data).ToLocalChecked());
+  info.GetReturnValue().Set(result);
+}
+
 void RegisterAPIs(v8::Local<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("_version").ToLocalChecked(),
@@ -417,6 +517,12 @@ void RegisterAPIs(v8::Local<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("getUserId").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(getUserId)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("getStorage").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(getStorage)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("setStorage").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(setStorage)->GetFunction());
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
