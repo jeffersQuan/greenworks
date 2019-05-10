@@ -85,6 +85,8 @@ NAN_METHOD(initSdk) {
                 ret = true;
                 has_init = true;
                 code = 0;
+            } else {
+                code = -4;
             }
         } else {
         	code = -3;
