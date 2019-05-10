@@ -359,7 +359,7 @@ NAN_METHOD(getUserId) {
 NAN_METHOD(getStorage) {
   Nan::HandleScope scope;
   rail::RailString filename = "imprison";
-  rail::RailResult result;
+  rail::RailResult rail_result;
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
   int code = -1;
@@ -367,15 +367,15 @@ NAN_METHOD(getStorage) {
 
   if (sdk_handle != NULL) {
     rail::helper::Invoker invoker(sdk_handle);
-    rail::IRailFile* file = invoker.RailFactory()->RailStorageHelper()->OpenFile(filename, &result);
+    rail::IRailFile* file = invoker.RailFactory()->RailStorageHelper()->OpenFile(filename, &rail_result);
 
-	if (result == rail::kSuccess) {
+	if (rail_result == rail::kSuccess) {
 		uint32_t file_size = file->GetSize();
 		char* buff = new char[file_size + 1];
 
-		file->Read(buff, file_size, &result);
+		file->Read(buff, file_size, &rail_result);
 
-		if (result == rail::kSuccess) {
+		if (rail_result == rail::kSuccess) {
 			buff[file_size] = '\0';
 			data = buff;
 			code = 0;
@@ -386,12 +386,11 @@ NAN_METHOD(getStorage) {
 		}
 	}
 	else {
-		file = invoker.RailFactory()->RailStorageHelper()->CreateFileA(filename, &result);
+		file = invoker.RailFactory()->RailStorageHelper()->CreateFileA(filename, &rail_result);
 		const char *buff1 = "test";
-		rail::RailResult result1;
-		file->Write(buff1, strlen(buff1) + 1, &result1);
+		file->Write(buff1, strlen(buff1) + 1, &rail_result);
 
-		if (result1 == rail::kSuccess) {
+		if (rail_result == rail::kSuccess) {
 			code = 0;
 			ret = true;
 			data = "test";
@@ -417,7 +416,7 @@ NAN_METHOD(getStorage) {
 NAN_METHOD(setStorage) {
   Nan::HandleScope scope;
   rail::RailString filename = "imprison";
-  rail::RailResult result;
+  rail::RailResult rail_result;
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
   int code = -1;
@@ -431,12 +430,12 @@ NAN_METHOD(setStorage) {
 
   if (sdk_handle != NULL) {
     rail::helper::Invoker invoker(sdk_handle);
-    rail::IRailFile* file = invoker.RailFactory()->RailStorageHelper()->CreateFileA(filename, &result);
+    rail::IRailFile* file = invoker.RailFactory()->RailStorageHelper()->CreateFileA(filename, &rail_result);
 	uint32_t len = data_to_store.length();
 
-	file->Write(data_to_store.c_str(), len, &result);
+	file->Write(data_to_store.c_str(), len, &rail_result);
 
-	if (result == rail::kSuccess) {
+	if (rail_result == rail::kSuccess) {
 		data = data_to_store;
 		code = 0;
 		ret = true;
