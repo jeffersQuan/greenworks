@@ -52,7 +52,7 @@ NAN_METHOD(InitAPI) {
 		rail_sdk_name = L"rail_api.dll";
 #endif
 
-//		std::wstring rail_sdk_path = L".\\rail\\libs\\" + rail_sdk_name;
+		std::wstring rail_sdk_path = rail_sdk_name;
 
         if (sdk_handle == NULL) {
             HMODULE dll_handle = ::LoadLibraryW(rail_sdk_path.c_str());
