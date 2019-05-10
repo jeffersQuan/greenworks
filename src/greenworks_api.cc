@@ -68,7 +68,7 @@ NAN_METHOD(initSdk) {
   Nan::HandleScope scope;
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
-  int code = 0;
+  uint32 code = -1;
 
   if (!has_init) {
     sdk_handle = LoadWeGameSDKLibrary();
@@ -84,15 +84,17 @@ NAN_METHOD(initSdk) {
             if (ret) {
                 ret = true;
                 has_init = true;
+                code = 0;
             }
         } else {
-        	code = -2;
+        	code = -3;
         }
     } else {
-    	code = -1;
+    	code = -2;
     }
   } else {
     ret = true;
+    code = 0;
   }
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
