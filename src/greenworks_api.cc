@@ -68,7 +68,7 @@ NAN_METHOD(initSdk) {
   Nan::HandleScope scope;
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
-  uint32 code = -1;
+  int code = -1;
 
   if (!has_init) {
     sdk_handle = LoadWeGameSDKLibrary();
