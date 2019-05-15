@@ -482,6 +482,7 @@ NAN_METHOD(getProductsInfo) {
     		if (iRailPurchaseStore == NULL) {
     		  iRailPurchaseStore = new RailPurchaseStore();
     		}
+    		v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
     		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
     		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
@@ -532,6 +533,7 @@ NAN_METHOD(payForProduct) {
     		if (iRailPurchaseStore == NULL) {
     		  iRailPurchaseStore = new RailPurchaseStore();
     		}
+    		v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
     		iRailPurchaseStore->asyncPurchaseProductsCallback.Reset(isolate, cb);
     		rail::RailResult result = rail_in_game_purchase_->AsyncPurchaseProducts(productItems, orderId.c_str());
