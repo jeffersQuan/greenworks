@@ -471,35 +471,35 @@ NAN_METHOD(getProductsInfo) {
 	THROW_BAD_ARGS("Bad arguments");
   }
 
-  if (sdk_handle != NULL) {
-	rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
-
-    if (rail_in_game_purchase_ == NULL) {
-    	code = -3;
-    } else {
-    	if (rail_in_game_purchase_) {
-    		Local<Function> cb = info[0].As<v8::Function>();
-    		if (iRailPurchaseStore == NULL) {
-    		  iRailPurchaseStore = new RailPurchaseStore();
-    		}
-    		v8::Isolate *isolate = v8::Isolate::GetCurrent();
-
-    		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
-    		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
-    		if (result == rail::kSuccess) {
-    			code = 0;
-    			ret = true;
-    		} else {
-    			code = -5;
-    		}
-    	} else {
-    		code = -4;
-    	}
-    }
-  }
-  else {
-    code = -2;
-  }
+//  if (sdk_handle != NULL) {
+//	rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
+//
+//    if (rail_in_game_purchase_ == NULL) {
+//    	code = -3;
+//    } else {
+//    	if (rail_in_game_purchase_) {
+//    		Local<Function> cb = info[0].As<v8::Function>();
+//    		if (iRailPurchaseStore == NULL) {
+//    		  iRailPurchaseStore = new RailPurchaseStore();
+//    		}
+//    		v8::Isolate *isolate = v8::Isolate::GetCurrent();
+//
+//    		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
+//    		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
+//    		if (result == rail::kSuccess) {
+//    			code = 0;
+//    			ret = true;
+//    		} else {
+//    			code = -5;
+//    		}
+//    	} else {
+//    		code = -4;
+//    	}
+//    }
+//  }
+//  else {
+//    code = -2;
+//  }
 
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
