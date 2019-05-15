@@ -523,6 +523,7 @@ NAN_METHOD(payForProduct) {
     	code = -3;
     } else {
     	if (rail_in_game_purchase_) {
+    	    rail::RailArray<rail::RailProductItem> productItems;
     		int64_t product_id = info[0].As<v8::Number>()->NumberValue();
     		std::string order_id = *(v8::String::Utf8Value(info[1]));
     		rail::RailProductItem productItem;
@@ -536,7 +537,7 @@ NAN_METHOD(payForProduct) {
     		v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
     		iRailPurchaseStore->asyncPurchaseProductsCallback.Reset(isolate, cb);
-    		rail::RailResult result = rail_in_game_purchase_->AsyncPurchaseProducts(productItems, orderId.c_str());
+    		rail::RailResult result = rail_in_game_purchase_->AsyncPurchaseProducts(productItems, order_id.c_str());
     		if (result == rail::kSuccess) {
     			code = 0;
     			ret = true;
