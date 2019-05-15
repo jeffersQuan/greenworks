@@ -627,10 +627,10 @@ void RegisterAPIs(v8::Local<v8::Object> exports) {
            Nan::New<v8::FunctionTemplate>(setStorage)->GetFunction());
   Nan::Set(exports,
            Nan::New("getProductsInfo").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(getStorage)->GetFunction());
+           Nan::New<v8::FunctionTemplate>(getProductsInfo)->GetFunction());
   Nan::Set(exports,
            Nan::New("payForProduct").ToLocalChecked(),
-           Nan::New<v8::FunctionTemplate>(getStorage)->GetFunction());
+           Nan::New<v8::FunctionTemplate>(payForProduct)->GetFunction());
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
