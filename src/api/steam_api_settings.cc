@@ -672,6 +672,7 @@ NAN_METHOD(asyncInstallDlc) {
   v8::Local<v8::Object> result = Nan::New<v8::Object>();
   bool ret = false;
   int code = -1;
+  bool  isDlcOwned = false;
 
   if (iCustomEvents == NULL) {
     iCustomEvents = new CustomEvents();
