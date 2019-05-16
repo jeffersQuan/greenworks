@@ -704,7 +704,7 @@ NAN_METHOD(asyncInstallDlc) {
             code = 0;
             ret = true;
         } else {
-            code = -4
+            code = -4;
         }
     }
   }
