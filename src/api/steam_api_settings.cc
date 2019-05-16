@@ -593,7 +593,7 @@ NAN_METHOD(getDlcCount) {
 
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
-  result->Set(Nan::New("count").ToLocalChecked(), Nan::New(dlcCount).ToLocalChecked());
+  result->Set(Nan::New("count").ToLocalChecked(), Nan::New(dlcCount));
   info.GetReturnValue().Set(result);
 }
 
