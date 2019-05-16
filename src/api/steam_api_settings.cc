@@ -482,20 +482,20 @@ NAN_METHOD(getProductsInfo) {
 	    if (rail_in_game_purchase_ == NULL) {
             code = -4;
         } else {
-        		Local<Function> cb = info[0].As<v8::Function>();
-        		if (iRailPurchaseStore == NULL) {
-        		  iRailPurchaseStore = new RailPurchaseStore();
-        		}
-        		v8::Isolate *isolate = info.GetReturnValue().GetIsolate();
+            Local<Function> cb = info[0].As<v8::Function>();
+            if (iRailPurchaseStore == NULL) {
+              iRailPurchaseStore = new RailPurchaseStore();
+            }
+            v8::Isolate *isolate = info.GetReturnValue().GetIsolate();
 
-        		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
-        		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
-        		if (result == rail::kSuccess) {
-        			code = 1;
-        			ret = true;
-        		} else {
-                    code = -5;
-        		}
+            iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
+            rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
+            if (result == rail::kSuccess) {
+                code = 1;
+                ret = true;
+            } else {
+                code = -5;
+            }
         }
     }
     else {
