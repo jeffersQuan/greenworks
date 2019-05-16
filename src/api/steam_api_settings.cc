@@ -476,12 +476,12 @@ NAN_METHOD(getProductsInfo) {
 
     if (rail_in_game_purchase_ == NULL) {
     	code = -3;
-    } else {
-    	if (rail_in_game_purchase_) {
-    		Local<Function> cb = info[0].As<v8::Function>();
-    		if (iRailPurchaseStore == NULL) {
-    		  iRailPurchaseStore = new RailPurchaseStore();
-    		}
+//    } else {
+//    	if (rail_in_game_purchase_) {
+//    		Local<Function> cb = info[0].As<v8::Function>();
+//    		if (iRailPurchaseStore == NULL) {
+//    		  iRailPurchaseStore = new RailPurchaseStore();
+//    		}
 //    		v8::Isolate *isolate = info.GetReturnValue().GetIsolate();
 //
 //    		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
@@ -492,10 +492,10 @@ NAN_METHOD(getProductsInfo) {
 //    		} else {
     			code = -5;
 //    		}
-    	} else {
-    		code = -4;
-    	}
-    }
+//    	} else {
+//    		code = -4;
+//    	}
+//    }
   }
   else {
     code = -2;
