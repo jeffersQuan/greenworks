@@ -474,9 +474,9 @@ NAN_METHOD(getProductsInfo) {
   if (sdk_handle != NULL) {
 	rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
 
-//    if (rail_in_game_purchase_ == NULL) {
-//    	code = -3;
-//    } else {
+    if (rail_in_game_purchase_ == NULL) {
+    	code = -3;
+    } else {
 //    	if (rail_in_game_purchase_) {
 //    		Local<Function> cb = info[0].As<v8::Function>();
 //    		if (iRailPurchaseStore == NULL) {
@@ -493,9 +493,9 @@ NAN_METHOD(getProductsInfo) {
 //    			code = -5;
 //    		}
 //    	} else {
-//    		code = -4;
+    		code = -4;
 //    	}
-//    }
+    }
   }
   else {
     code = -2;
