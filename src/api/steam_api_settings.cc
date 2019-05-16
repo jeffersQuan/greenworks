@@ -685,6 +685,7 @@ NAN_METHOD(asyncInstallDlc) {
         code = -3;
     }
     else {
+        v8::Isolate *isolate = info.GetReturnValue().GetIsolate();
         rail::RailDlcID railDlcId;
         int64_t dlcIdInt = info[0].As<v8::Number>()->NumberValue();
         railDlcId.set_id(dlcIdInt);
