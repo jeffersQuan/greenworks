@@ -566,6 +566,195 @@ NAN_METHOD(payForProduct) {
   info.GetReturnValue().Set(result);
 }
 
+NAN_METHOD(getDlcCount) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+  uint32_t  dlcCount = 0;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFactory* rail_factory = invoker.RailFactory();
+
+    if (rail_factory == NULL) {
+        code = -3;
+    }
+    else {
+        rail::IRailDlcHelper *railDlcHelper = rail_factory->RailDlcHelper();
+        dlcCount = railDlcHelper->GetDlcCount();
+        code = 0;
+        ret = true;
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  result->Set(Nan::New("count").ToLocalChecked(), Nan::New(dlcCount).ToLocalChecked());
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(isDlcOwned) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+  bool  isDlcOwned = false;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFactory* rail_factory = invoker.RailFactory();
+
+    if (rail_factory == NULL) {
+        code = -3;
+    }
+    else {
+        rail::IRailDlcHelper *railDlcHelper = rail_factory->RailDlcHelper();
+        rail::RailDlcID railDlcId;
+        int64_t dlcIdInt = info[0].As<v8::Number>()->NumberValue();
+        railDlcId.set_id(dlcIdInt);
+
+        isDlcOwned = railDlcHelper->IsOwnedDlc(railDlcId);
+        code = 0;
+        ret = true;
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(isDlcOwned));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(isDlcInstalled) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+  bool  isDlcInstalled = false;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFactory* rail_factory = invoker.RailFactory();
+
+    if (rail_factory == NULL) {
+        code = -3;
+    }
+    else {
+        rail::IRailDlcHelper *railDlcHelper = rail_factory->RailDlcHelper();
+        rail::RailDlcID railDlcId;
+        int64_t dlcIdInt = info[0].As<v8::Number>()->NumberValue();
+        railDlcId.set_id(dlcIdInt);
+        std::string dlcPath = *(v8::String::Utf8Value(info[1]));
+        rail::RailString *railDlcPath = new rail::RailString(dlcPath.c_str());
+
+        isDlcInstalled = railDlcHelper->IsDlcInstalled(railDlcId, railDlcPath);
+        code = 0;
+        ret = true;
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(isDlcInstalled));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(asyncInstallDlc) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+
+  if (iCustomEvents == NULL) {
+    iCustomEvents = new CustomEvents();
+  }
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFactory* rail_factory = invoker.RailFactory();
+
+    if (rail_factory == NULL) {
+        code = -3;
+    }
+    else {
+        rail::RailDlcID railDlcId;
+        int64_t dlcIdInt = info[0].As<v8::Number>()->NumberValue();
+        railDlcId.set_id(dlcIdInt);
+        Local<Function> cb1 = info[1].As<v8::Function>();
+        iCustomEvents->DlcStartDownloadCallback.Reset(isolate, cb1);
+        Local<Function> cb2 = info[2].As<v8::Function>();
+        iCustomEvents->DlcInstallProgressCallback.Reset(isolate, cb2);
+        Local<Function> cb3 = info[3].As<v8::Function>();
+        iCustomEvents->DlcInstallFinishCallback.Reset(isolate, cb3);
+        rail::IRailDlcHelper *railDlcHelper = rail_factory->RailDlcHelper();
+        isDlcOwned = railDlcHelper->IsOwnedDlc(railDlcId);
+
+        if (isDlcOwned) {
+            railDlcHelper->AsyncInstallDlc(railDlcId, "asyncInstallDlc");
+            code = 0;
+            ret = true;
+        } else {
+            code = -4
+        }
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
+NAN_METHOD(payForDlc) {
+  Nan::HandleScope scope;
+  v8::Local<v8::Object> result = Nan::New<v8::Object>();
+  bool ret = false;
+  int code = -1;
+
+  if (sdk_handle != NULL) {
+    rail::helper::Invoker invoker(sdk_handle);
+    rail::IRailFactory* rail_factory = invoker.RailFactory();
+
+    if (rail_factory == NULL) {
+        code = -3;
+    }
+    else {
+        rail::RailDlcID railDlcId;
+        int64_t dlcIdInt = info[0].As<v8::Number>()->NumberValue();
+        railDlcId.set_id(dlcIdInt);
+        rail::helper::Invoker invoker(sdk_handle);
+        rail::IRailFactory* rail_factory = invoker.RailFactory();
+        rail::IRailFloatingWindow* helper = rail_factory->RailFloatingWindow();
+        rail::RailStoreOptions options;
+
+        if (helper->IsFloatingWindowAvailable()) {
+            helper->AsyncShowStoreWindow(dlcIdInt, options, "");
+            code = 0;
+            ret = true;
+        } else {
+            code = -4;
+        }
+    }
+  }
+  else {
+    code = -2;
+  }
+
+  result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
+  result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
+  info.GetReturnValue().Set(result);
+}
+
 void RegisterAPIs(v8::Local<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("_version").ToLocalChecked(),
@@ -639,6 +828,21 @@ void RegisterAPIs(v8::Local<v8::Object> exports) {
   Nan::Set(exports,
            Nan::New("payForProduct").ToLocalChecked(),
            Nan::New<v8::FunctionTemplate>(payForProduct)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("getDlcCount").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(getDlcCount)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("isDlcOwned").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(isDlcOwned)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("isDlcInstalled").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(isDlcInstalled)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("asyncInstallDlc").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(asyncInstallDlc)->GetFunction());
+  Nan::Set(exports,
+           Nan::New("payForDlc").ToLocalChecked(),
+           Nan::New<v8::FunctionTemplate>(payForDlc)->GetFunction());
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
