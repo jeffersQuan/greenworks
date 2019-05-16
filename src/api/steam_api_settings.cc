@@ -472,30 +472,34 @@ NAN_METHOD(getProductsInfo) {
   }
 
   if (sdk_handle != NULL) {
-	rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
+	if (iRailPurchaseStore != NULL) {
+	    rail::IRailInGamePurchase* rail_in_game_purchase_ = iRailPurchaseStore->rail_in_game_purchase_;
 
-//    if (rail_in_game_purchase_ == NULL) {
-//    	code = -3;
-//    } else {
-//    		Local<Function> cb = info[0].As<v8::Function>();
-//    		if (iRailPurchaseStore == NULL) {
-//    		  iRailPurchaseStore = new RailPurchaseStore();
-//    		}
-//    		v8::Isolate *isolate = info.GetReturnValue().GetIsolate();
-//
-//    		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
-//    		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
-//    		if (result == rail::kSuccess) {
-//    			code = 1;
-//    			ret = true;
-//    		} else {
-    			code = -4;
-//    		}
-//    }
-  }
-  else {
-    code = -2;
-  }
+	    if (rail_in_game_purchase_ == NULL) {
+            	code = -4;
+            } else {
+        //    		Local<Function> cb = info[0].As<v8::Function>();
+        //    		if (iRailPurchaseStore == NULL) {
+        //    		  iRailPurchaseStore = new RailPurchaseStore();
+        //    		}
+        //    		v8::Isolate *isolate = info.GetReturnValue().GetIsolate();
+        //
+        //    		iRailPurchaseStore->asyncRequestAllPurchasableProductsCallback.Reset(isolate, cb);
+        //    		rail::RailResult result = rail_in_game_purchase_->AsyncRequestAllPurchasableProducts("all");
+        //    		if (result == rail::kSuccess) {
+        //    			code = 1;
+        //    			ret = true;
+        //    		} else {
+            			code = -5;
+        //    		}
+            }
+          }
+          else {
+            code = -3;
+          }
+	} else {
+	    code = -2;
+	}
 
   result->Set(Nan::New("ret").ToLocalChecked(), Nan::New(ret));
   result->Set(Nan::New("code").ToLocalChecked(), Nan::New(code));
