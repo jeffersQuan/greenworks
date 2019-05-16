@@ -477,7 +477,7 @@ NAN_METHOD(getProductsInfo) {
     if (rail_in_game_purchase_ == NULL) {
     	code = -3;
     } else {
-//    	if (rail_in_game_purchase_) {
+    	if (rail_in_game_purchase_) {
 //    		Local<Function> cb = info[0].As<v8::Function>();
 //    		if (iRailPurchaseStore == NULL) {
 //    		  iRailPurchaseStore = new RailPurchaseStore();
@@ -490,11 +490,11 @@ NAN_METHOD(getProductsInfo) {
 //    			code = 1;
 //    			ret = true;
 //    		} else {
-//    			code = -5;
+    			code = -5;
 //    		}
-//    	} else {
+    	} else {
     		code = -4;
-//    	}
+    	}
     }
   }
   else {
