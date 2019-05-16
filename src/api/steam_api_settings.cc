@@ -516,7 +516,7 @@ NAN_METHOD(payForProduct) {
   bool ret = false;
   int code = -1;
 
-  if (info.Length() < 3 || (!info[1]->IsString()) || (!info[0]->IsNumber()) || (!info[2]->IsFunction())) {
+  if (info.Length() < 3 || (!info[2]->IsFunction())) {
 	THROW_BAD_ARGS("Bad arguments");
   }
 
