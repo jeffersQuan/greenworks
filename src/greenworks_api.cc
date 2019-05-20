@@ -76,9 +76,8 @@ NAN_METHOD(initSdk) {
         rail::helper::Invoker invoker(sdk_handle);
 
         rail::RailGameID game_id = 2000958;
-        char **argv;
 
-        bool ret1 = invoker.RailNeedRestartAppForCheckingEnvironment(game_id, 0, const_cast<const char**>(argv));
+        bool ret1 = invoker.RailNeedRestartAppForCheckingEnvironment(game_id, 0, NULL);
         if (!ret1) {
             ret1 = invoker.RailInitialize();
             if (ret1) {
